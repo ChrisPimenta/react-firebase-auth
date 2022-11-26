@@ -93,3 +93,5 @@ Thumbs.db
 build
 
 .firebase/
+
+package-lock.json
