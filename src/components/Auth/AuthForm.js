@@ -20,38 +20,46 @@ const AuthForm = () => {
 
     setIsLoading(true);
 
-    if (isLogin) {
+    let url = '';
 
+    if (isLogin) {
+      url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBqQdEIhxadAAhnHJ_tIA2fhmzOTLVPOHI';
     } else {
       // Key found at:
       // https://console.firebase.google.com/project/react-firebase-auth-cp/settings/general
-      fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBqQdEIhxadAAhnHJ_tIA2fhmzOTLVPOHI',
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            email: enteredEmail,
-            password: enteredPassword,
-            returnSecureToken: true
-          }),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      ).then(res => {
-        setIsLoading(false);
-        if (res.ok) {
-
-        } else {
-          return res.json().then(response => {
-            // Error case
-            const errorMessage = response.error.message ? response.error.message : 'Authentication Failed';
-
-            alert(errorMessage);
-          });
-        }
-
-      })
+      url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBqQdEIhxadAAhnHJ_tIA2fhmzOTLVPOHI';
     }
+
+    fetch(url,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          email: enteredEmail,
+          password: enteredPassword,
+          returnSecureToken: true
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    ).then(res => {
+      setIsLoading(false);
+      if (res.ok) {
+        return res.json();
+      } else {
+        return res.json().then(response => {
+          // Error case
+          const errorMessage = response.error.message ? response.error.message : 'Authentication Failed';
+
+          throw new Error(errorMessage);
+        });
+      }
+    }).then(data => {
+      console.log(data);
+    }).catch(err => {
+      alert(err.message);
+    })
+
   };
 
   return (
